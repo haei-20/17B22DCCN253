@@ -43,14 +43,14 @@ public class MovieSearchServlet extends HttpServlet {
 		switch (command) {
 		case "SEARCH_FORM": 
 			// Mặc định: Hiển thị form và danh sách rỗng/tất cả
-			showMoviesAndSetView(req, resp, "");
+			searchMovie(req, resp, "");
  
 			url = "/Customer/gdSearchmovie.jsp"; 
 			break;
 
 		case "SEARCHMOVIE": 
 			String keyword = req.getParameter("moviekeyword");
-			showMoviesAndSetView(req, resp, keyword);
+			searchMovie(req, resp, keyword);
        
 			url = "/Customer/gdSearchmovie.jsp"; 
 			break;
@@ -74,7 +74,7 @@ public class MovieSearchServlet extends HttpServlet {
 		}
 	}
 
-	private void showMoviesAndSetView(HttpServletRequest req, HttpServletResponse resp, String keyword)
+	private void searchMovie(HttpServletRequest req, HttpServletResponse resp, String keyword)
 			throws ServletException, IOException {
 
 		// Gọi DAO 
