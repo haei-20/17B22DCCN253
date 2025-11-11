@@ -10,17 +10,9 @@ import javax.servlet.annotation.WebServlet;
 
 @WebServlet("/MovieSearchServlet")
 public class MovieSearchServlet extends HttpServlet {
-
+	private static final long serialVersionUID = 1L;
+        
 	private MovieDAO movieDAO;
-
-	// Hằng số cho các Action
-	private static final String ACTION_SEARCH_FORM = "SEARCH_FORM";
-	private static final String ACTION_SEARCH = "SEARCHMOVIE";
-	private static final String ACTION_VIEW_DETAIL = "VIEWAIL";
-
-	// Hằng số cho các View
-	private static final String VIEW_SEARCH_PAGE = "/Customer/gdSearchmovie.jsp";
-	private static final String VIEW_DETAIL_PAGE = "/Customer/gdMovieDetail.jsp";
 
 	public void init() {
 		movieDAO = new MovieDAO();
@@ -43,26 +35,30 @@ public class MovieSearchServlet extends HttpServlet {
 		resp.setCharacterEncoding("UTF-8");
 
 		String action = req.getParameter("action");
-		String command = (action == null || action.isEmpty()) ? ACTION_SEARCH_FORM : action.toUpperCase();
+        
+		String command = (action == null || action.isEmpty()) ? "SEARCH_FORM" : action.toUpperCase(); 
 
 		String url = null;
 
 		switch (command) {
-		case ACTION_SEARCH_FORM:
+		case "SEARCH_FORM": 
 			// Mặc định: Hiển thị form và danh sách rỗng/tất cả
 			showMoviesAndSetView(req, resp, "");
-			url = VIEW_SEARCH_PAGE;
+ 
+			url = "/Customer/gdSearchmovie.jsp"; 
 			break;
 
-		case ACTION_SEARCH:
+		case "SEARCHMOVIE": 
 			String keyword = req.getParameter("moviekeyword");
 			showMoviesAndSetView(req, resp, keyword);
-			url = VIEW_SEARCH_PAGE;
+       
+			url = "/Customer/gdSearchmovie.jsp"; 
 			break;
 
-		case ACTION_VIEW_DETAIL:
+		case "VIEWAIL": 
 			viewMovieDetail(req, resp);
-			url = VIEW_DETAIL_PAGE;
+           
+			url = "/Customer/gdMovieDetail.jsp"; 
 			break;
 
 		default:
@@ -81,7 +77,7 @@ public class MovieSearchServlet extends HttpServlet {
 	private void showMoviesAndSetView(HttpServletRequest req, HttpServletResponse resp, String keyword)
 			throws ServletException, IOException {
 
-		// Gọi DAO với TÊN PHƯƠNG THỨC GỐC của bạn
+		// Gọi DAO 
 		ArrayList<Movie> listMovie = movieDAO.getMoviesbykeyword(keyword == null ? "" : keyword);
 
 		// Đặt Model vào Request Scope
@@ -93,7 +89,7 @@ public class MovieSearchServlet extends HttpServlet {
 
 		String title = req.getParameter("movieTitle");
 
-		// Gọi DAO với TÊN PHƯƠNG THỨC GỐC của bạn
+		// Gọi DAO với TÊN PHƯƠNG THỨC 
 		Movie movie = movieDAO.getMovieDetail(title);
 
 		// Đặt Model vào Request Scope
