@@ -13,8 +13,15 @@ public class MovieSearchServlet extends HttpServlet {
 
 	private MovieDAO movieDAO;
 
-	// Đổi tên biến để khớp với sơ đồ UML: movieDAO.getMoviesbykeyword(String)
-	// Giả định phương thức này trả về ArrayList<Movie>
+	// Hằng số cho các Action
+	private static final String ACTION_SEARCH_FORM = "SEARCH_FORM";
+	private static final String ACTION_SEARCH = "SEARCHMOVIE";
+	private static final String ACTION_VIEW_DETAIL = "VIEWAIL";
+
+	// Hằng số cho các View
+	private static final String VIEW_SEARCH_PAGE = "/Customer/gdSearchmovie.jsp";
+	private static final String VIEW_DETAIL_PAGE = "/Customer/gdMovieDetail.jsp";
+
 	public void init() {
 		movieDAO = new MovieDAO();
 	}
@@ -31,78 +38,65 @@ public class MovieSearchServlet extends HttpServlet {
 
 	protected void processRequest(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
-		// Thiết lập mã hóa ký tự để xử lý tiếng Việt
+
 		req.setCharacterEncoding("UTF-8");
 		resp.setCharacterEncoding("UTF-8");
 
-		// Lấy action từ tham số, sử dụng 'showListMovieForm' làm mặc định
 		String action = req.getParameter("action");
-		if (action == null)
-			action = "showListMovieForm"; // Mặc định hiển thị form tìm kiếm
-											// trống
+		String command = (action == null || action.isEmpty()) ? ACTION_SEARCH_FORM : action.toUpperCase();
 
-		switch (action) {
-		case "searchMovie":
-			searchMovie(req, resp);
+		String url = null;
+
+		switch (command) {
+		case ACTION_SEARCH_FORM:
+			// Mặc định: Hiển thị form và danh sách rỗng/tất cả
+			showMoviesAndSetView(req, resp, "");
+			url = VIEW_SEARCH_PAGE;
 			break;
-		case "viewMovieDetail":
+
+		case ACTION_SEARCH:
+			String keyword = req.getParameter("moviekeyword");
+			showMoviesAndSetView(req, resp, keyword);
+			url = VIEW_SEARCH_PAGE;
+			break;
+
+		case ACTION_VIEW_DETAIL:
 			viewMovieDetail(req, resp);
+			url = VIEW_DETAIL_PAGE;
 			break;
-		case "showListMovieForm":
+
 		default:
-			showListMovieForm(req, resp);
-			break;
+			// Chuyển hướng về trang chủ nếu action không hợp lệ
+			resp.sendRedirect(req.getContextPath() + "/Customer/gdHome.jsp");
+			return;
+		}
+
+		// Controller chuyển tiếp đến View
+		if (url != null) {
+			RequestDispatcher rd = req.getRequestDispatcher(url);
+			rd.forward(req, resp);
 		}
 	}
 
-	/**
-	 * Chuyển hướng đến trang tìm kiếm (gdSearchmovie.jsp) với danh sách rỗng
-	 * hoặc nếu không có từ khóa nào được tìm kiếm trước đó.
-	 */
-	private void showListMovieForm(HttpServletRequest req, HttpServletResponse resp)
+	private void showMoviesAndSetView(HttpServletRequest req, HttpServletResponse resp, String keyword)
 			throws ServletException, IOException {
-		// Khởi tạo danh sách rỗng để tránh lỗi null pointer trong JSP
-		req.setAttribute("listMovie", new ArrayList<Movie>());
-		RequestDispatcher rd = req.getRequestDispatcher("/gdSearchmovie.jsp");
-		rd.forward(req, resp);
-	}
 
-	/**
-	 * Xử lý tìm kiếm phim theo từ khóa. Phương thức này được gọi khi form tìm
-	 * kiếm POST đến Servlet.
-	 */
-	private void searchMovie(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		// Lấy từ khóa (đổi tên tham số từ 'moviekeyword' để khớp với JSP)
-		String keyword = req.getParameter("moviekeyword");
-
-		// Gọi DAO để lấy danh sách phim
-		// Giả định movieDAO.getMoviesByKeyword chấp nhận null/rỗng
+		// Gọi DAO với TÊN PHƯƠNG THỨC GỐC của bạn
 		ArrayList<Movie> listMovie = movieDAO.getMoviesbykeyword(keyword == null ? "" : keyword);
 
-		// ĐẶT TÊN ATTRIBUTE PHẢI KHỚP VỚI JSP: listMovie
+		// Đặt Model vào Request Scope
 		req.setAttribute("listMovie", listMovie);
-
-		// Forward về trang tìm kiếm để hiển thị kết quả
-		RequestDispatcher rd = req.getRequestDispatcher("/gdSearchmovie.jsp");
-		rd.forward(req, resp);
 	}
 
-	/**
-	 * Lấy chi tiết một phim cụ thể.
-	 */
 	private void viewMovieDetail(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
-		// Lấy tên phim (đổi tên tham số từ 'movieTitle' để khớp với JSP)
+
 		String title = req.getParameter("movieTitle");
 
-		// Gọi DAO để lấy chi tiết phim
+		// Gọi DAO với TÊN PHƯƠNG THỨC GỐC của bạn
 		Movie movie = movieDAO.getMovieDetail(title);
 
-		// ĐẶT TÊN ATTRIBUTE PHẢI KHỚP VỚI JSP: movieDetail
+		// Đặt Model vào Request Scope
 		req.setAttribute("movieDetail", movie);
-
-		// Forward về trang chi tiết phim
-		RequestDispatcher rd = req.getRequestDispatcher("/gdMovieDetail.jsp");
-		rd.forward(req, resp);
 	}
 }
