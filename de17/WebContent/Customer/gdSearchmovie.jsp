@@ -8,7 +8,6 @@
 <meta charset="UTF-8">
 <title>Tìm kiếm Phim</title>
 <style>
-/* Tinh chỉnh CSS cho giao diện tìm kiếm */
 body {
 	font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 	background-color: #f4f6f9; /* Nền xám nhạt hiện đại */
@@ -121,24 +120,24 @@ table {
 	border-collapse: collapse;
 	border: 1px solid #dee2e6;
 	border-radius: 8px;
-	overflow: hidden; /* Cần thiết để áp dụng border-radius cho bảng */
+	overflow: hidden;
 }
 
 th, td {
 	border: 1px solid #dee2e6;
 	padding: 12px;
-	text-align: left;
+	text-align: left; /* Mặc định căn trái cho tất cả các cột */
 	font-size: 0.95em;
 }
 
 th {
-	background-color: #e9ecef; /* Nền header bảng */
+	background-color: #e9ecef;
 	font-weight: 600;
 	color: #495057;
 }
 
 tbody tr:nth-child(even) {
-	background-color: #f8f9fa; /* Sọc cho dễ đọc */
+	background-color: #f8f9fa;
 }
 
 td {
@@ -161,6 +160,10 @@ td a:hover {
 	padding: 20px;
 	color: #6c757d;
 }
+.right {
+    text-align: right !important;
+}
+
 </style>
 </head>
 <body>
@@ -168,21 +171,24 @@ td a:hover {
 	<div class="container">
 
 		<div class="header">
-			<a href="gdHome.jsp" class="back-button">&lt;</a>
+			<a href="${pageContext.request.contextPath}/Customer/gdHome.jsp"
+				class="back-button">&lt;</a>
 			<h1>Seach Movie</h1>
 		</div>
 
 		<div class="search-form">
 			<form action="${pageContext.request.contextPath}/MovieSearchServlet"
 				method="POST" style="display: flex; align-items: center;">
-				<input type="hidden" name="action" value="SEARCHMOVIE">  <label
-					for="moviekeyword">Nhập tên phim</label>  <input type="text"
+
+				<input type="hidden" name="action" value="SEARCHMOVIE"> <label
+					for="moviekeyword">Nhập tên phim</label> <input type="text"
 					id="moviekeyword" name="moviekeyword" value="${param.moviekeyword}">
 				<input type="submit" value="Tìm kiếm">
 			</form>
 		</div>
 
 		<div class="results-section">
+			<h3>Kết quả tìm kiếm</h3>
 			<table>
 				<thead>
 					<tr>
@@ -195,9 +201,9 @@ td a:hover {
 				<tbody>
 					<c:forEach var="movie" items="${listMovie}" varStatus="status">
 						<tr>
-							<td>${status.count}</td>
-							<td>${movie.movietitle}</td> 
-							<td>${movie.duration}</td>
+							<td class="right">${status.count}</td>
+							<td>${movie.movietitle}</td>
+							<td class="right">${movie.duration}</td>
 							<td><a
 								href="${pageContext.request.contextPath}/MovieSearchServlet?action=VIEWAIL&movieTitle=${movie.movietitle}">
 									Xem chi tiết </a></td>

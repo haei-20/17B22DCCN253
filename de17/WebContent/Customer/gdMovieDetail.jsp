@@ -7,6 +7,7 @@
 <meta charset="UTF-8">
 <title>Chi tiết Phim</title>
 <style>
+
 /* Tinh chỉnh CSS cho giao diện chi tiết phim */
 body {
 	font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -214,15 +215,19 @@ body {
 						<table class="details-table">
 							<tr>
 								<th>Trailer:</th>
-								<td><c:if test="${not empty movieDetail.trailer}">
-										<a href="${movieDetail.trailer}" target="_blank"
+								<td>
+                                    <c:if test="${not empty movieDetail.trailer}">
+                                        <a href="${movieDetail.trailer}" target="_blank"
 											style="text-decoration: none; color: black; font-weight: bold;">
-
-											<p>(Nhấn để xem Trailer trên YouTube)</p>
+											
+											<span style="display: block; margin-left: 5px;">(Nhấn để xem Trailer trên YouTube)</span>
 										</a>
-									</c:if> <c:if test="${empty movieDetail.trailer}">
-										<p>Không có Trailer</p>
-									</c:if></td>
+									</c:if> 
+                                    
+                                    <c:if test="${empty movieDetail.trailer}">
+                                        <span>Không có Trailer</span>
+									</c:if>
+                                </td>
 							</tr>
 						</table>
 					</div>
